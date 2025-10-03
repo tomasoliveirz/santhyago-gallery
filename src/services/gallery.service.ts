@@ -126,6 +126,8 @@ export class GalleryService {
     // Import default images dynamically to avoid circular dependencies
     const { GALLERY_CONFIG } = await import('@/config/constants');
     
+    console.log('getFallbackImages:', GALLERY_CONFIG.images);
+    
     return {
       data: GALLERY_CONFIG.images,
       loading: false,

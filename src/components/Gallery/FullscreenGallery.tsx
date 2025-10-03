@@ -6,35 +6,27 @@ import type { GalleryProps } from '@/types';
 // 🎞️ Fullscreen Gallery Component - Fullscreen Optimized
 // =============================
 export function FullscreenGallery({ images, config, className = '' }: GalleryProps) {
-  const {
-    currentIndex,
-    currentImage,
-    transitionDuration,
-  } = useSlideshow(images, config);
+  // Debug logs
+  console.log('FullscreenGallery:', { images, imagesLength: images?.length });
 
-  if (!currentImage) {
+  if (!images || images.length === 0) {
     return (
       <div className={`gallery-container bg-gray-900 flex items-center justify-center ${className}`}>
-        <div className="text-white text-lg">Nenhuma imagem disponível</div>
+        <div className="text-white text-lg">Nenhuma imagem disponível - {images?.length || 0} imagens</div>
       </div>
     );
   }
 
+  // Versão simplificada para debug
   return (
     <div className={`gallery-container ${className}`}>
-      <AnimatePresence mode="wait">
-        <motion.img
-          key={currentImage.id}
-          src={currentImage.url}
-          alt={currentImage.alt}
-          className="gallery-image"
-          initial={{ opacity: 0, scale: 1.035 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0.0, scale: 1.01 }}
-          transition={{ duration: transitionDuration / 1000, ease: "easeOut" }}
-          loading="lazy"
-        />
-      </AnimatePresence>
+      <img
+        src={images[0].url}
+        alt={images[0].alt}
+        className="gallery-image"
+        onLoad={() => console.log('Imagem carregada:', images[0].url)}
+        onError={(e) => console.log('Erro ao carregar imagem:', images[0].url, e)}
+      />
       
       {/* Vignette overlay */}
       <div className="gallery-vignette" />
@@ -42,19 +34,10 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
       {/* Subtle grain texture */}
       <div className="gallery-grain" />
       
-      {/* Slide indicator */}
-      {images.length > 1 && (
-        <div className="gallery-indicators">
-          {images.map((_, index) => (
-            <div
-              key={index}
-              className={`gallery-dot ${
-                index === currentIndex ? 'active' : 'inactive'
-              }`}
-            />
-          ))}
-        </div>
-      )}
+      {/* Debug info */}
+      <div className="absolute top-4 left-4 bg-black/50 text-white p-2 rounded text-sm">
+        Imagem: {images[0].alt} ({images.length} total)
+      </div>
     </div>
   );
 }

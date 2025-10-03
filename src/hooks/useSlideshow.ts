@@ -13,6 +13,9 @@ export function useSlideshow(images: GalleryImage[], config?: Partial<typeof GAL
   const slideInterval = config?.slideInterval ?? GALLERY_CONFIG.slideInterval;
   const transitionDuration = config?.transitionDuration ?? GALLERY_CONFIG.transitionDuration;
 
+  // Debug logs
+  console.log('useSlideshow:', { images, imagesLength: images?.length, currentIndex });
+
   const nextSlide = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   }, [images.length]);
