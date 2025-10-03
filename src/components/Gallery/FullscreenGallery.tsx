@@ -14,8 +14,8 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
   const [showA, setShowA] = useState(true);
   const [srcA, setSrcA] = useState(images[0]?.url || "");
   const [srcB, setSrcB] = useState(images[1]?.url || "");
-  const [currentIndex, setCurrentIndex] = useState(1);
   const timers = useRef<number[]>([]);
+  const currentIndexRef = useRef(0);
 
   // Preload helper
   const preload = (url: string) =>
@@ -35,33 +35,44 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
       return;
     }
 
+    let nextIdx = 1; // começamos da segunda imagem
+
     const loop = async () => {
-      // 1) aguarda o tempo de exposição
-      timers.current.push(window.setTimeout(async () => {
-        // 2) prepara próxima imagem (preload para evitar flash)
-        const nextIdx = currentIndex;
-        const nextUrl = images[nextIdx]?.url;
-        if (!nextUrl) return;
+      // 1) aguarda o tempo de exposição (imagem parada e visível)
+      await new Promise(resolve => {
+        timers.current.push(window.setTimeout(resolve, holdMs));
+      });
 
-        try { 
-          await preload(nextUrl); 
-        } catch (err) {
-          console.warn('Erro ao carregar imagem:', nextUrl);
-        }
+      // 2) prepara próxima imagem (preload para evitar flash)
+      const nextUrl = images[nextIdx]?.url;
+      if (!nextUrl) return;
 
-        // 3) coloca a próxima no layer escondido
-        if (showA) setSrcB(nextUrl);
-        else setSrcA(nextUrl);
+      try { 
+        await preload(nextUrl); 
+      } catch (err) {
+        console.warn('Erro ao carregar imagem:', nextUrl);
+      }
 
-        // 4) dispara o cross-fade (ambas transições em simultâneo)
-        requestAnimationFrame(() => setShowA(v => !v));
+      // 3) coloca a próxima no layer escondido
+      if (showA) {
+        setSrcB(nextUrl);
+      } else {
+        setSrcA(nextUrl);
+      }
 
-        // 5) depois do fade, avança o ponteiro e recomeça
-        timers.current.push(window.setTimeout(() => {
-          setCurrentIndex((nextIdx + 1) % images.length);
-          loop();
-        }, fadeMs));
-      }, holdMs));
+      // 4) dispara o cross-fade (ambas transições em simultâneo)
+      await new Promise(resolve => {
+        requestAnimationFrame(() => {
+          setShowA(v => !v);
+          currentIndexRef.current = nextIdx;
+          // aguarda o fade terminar completamente
+          timers.current.push(window.setTimeout(resolve, fadeMs));
+        });
+      });
+
+      // 5) avança o ponteiro e recomeça
+      nextIdx = (nextIdx + 1) % images.length;
+      loop();
     };
 
     loop();
@@ -71,7 +82,7 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
       timers.current.forEach(t => clearTimeout(t));
       timers.current = [];
     };
-  }, [images, holdMs, fadeMs, showA, currentIndex]);
+  }, [images, holdMs, fadeMs]);
 
   if (!images || images.length === 0) {
     return (
@@ -149,7 +160,7 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
             <div
               key={index}
               className={`gallery-dot ${
-                index === (showA ? currentIndex - 1 : currentIndex) % images.length ? 'active' : ''
+                index === currentIndexRef.current ? 'active' : ''
               }`}
             />
           ))}
