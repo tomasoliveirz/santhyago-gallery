@@ -1,14 +1,16 @@
 import { useSlideshow } from '@/hooks/useSlideshow';
+import { useFadeBlur } from '@/hooks/useFadeBlur';
 import type { GalleryProps } from '@/types';
 
 // =============================
-// 🎞️ Fullscreen Gallery - Simple & Clean
+// 🎞️ Fullscreen Gallery - Simple Fade Blur
 // =============================
 export function FullscreenGallery({ images, config, className = '' }: GalleryProps) {
   const {
     currentIndex,
-    currentImage,
   } = useSlideshow(images, config);
+
+  const { displayIndex, isTransitioning, currentImage } = useFadeBlur(images, currentIndex);
 
   if (!images || images.length === 0) {
     return (
@@ -21,10 +23,10 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
   return (
     <div className={`gallery-container ${className}`}>
       <img
-        key={currentImage?.id || currentIndex}
+        key={currentImage?.id || displayIndex}
         src={currentImage?.url || images[0].url}
         alt={currentImage?.alt || images[0].alt}
-        className="gallery-image"
+        className={`gallery-image ${isTransitioning ? 'fade-blur' : 'fade-in'}`}
         loading="lazy"
       />
       
