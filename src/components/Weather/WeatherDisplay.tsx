@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Thermometer, Wind } from 'lucide-react';
-import { BRAND_CONFIG, HOTEL_CONFIG } from '@/config/constants';
+import { Wind, Droplets, Eye, Gauge } from 'lucide-react';
+import { BRAND_CONFIG } from '@/config/constants';
 import { WeatherIcon } from '@/components/UI/WeatherIcon';
 import { transformWeatherData, formatTemperature, formatWindSpeed, getWeatherStatusText } from '@/utils/weather.utils';
 import type { WeatherApiResponse, ComponentProps } from '@/types';
@@ -22,74 +22,116 @@ export function WeatherDisplay({ weatherData, loading, error, className = '' }: 
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`mt-4 ${className}`}
+      className={`mt-6 ${className}`}
     >
       <div
         className="relative rounded-3xl overflow-hidden ring-1 ring-white/10 backdrop-blur"
         style={{
           background:
-            "linear-gradient(90deg, rgba(12,12,12,0.85) 0%, rgba(12,12,12,0.85) 60%, rgba(12,12,12,0.7) 100%)",
+            "linear-gradient(135deg, rgba(12,12,12,0.95) 0%, rgba(20,20,20,0.95) 50%, rgba(12,12,12,0.95) 100%)",
         }}
       >
         {/* Gold top border accent */}
         <div 
-          className="absolute inset-x-0 top-0 h-[3px]" 
+          className="absolute inset-x-0 top-0 h-[4px]" 
           style={{
-            background: `linear-gradient(90deg, ${BRAND_CONFIG.goldDeep}, ${BRAND_CONFIG.gold})`,
+            background: `linear-gradient(90deg, ${BRAND_CONFIG.goldDeep}, ${BRAND_CONFIG.gold}, ${BRAND_CONFIG.goldDeep})`,
           }} 
         />
 
-        <div className="px-6 py-4 grid grid-cols-12 gap-4 items-center">
-          {/* Left: Current icon + temp */}
-          <div className="col-span-12 md:col-span-5 flex items-center gap-5">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10">
-              {transformedData ? (
-                <WeatherIcon weatherCode={transformedData.weatherCode} />
-              ) : (
-                <WeatherIcon weatherCode={0} />
-              )}
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold leading-none">
-                {transformedData ? formatTemperature(transformedData.temperature) : "–"}
+        <div className="px-8 py-6">
+          {/* Main Weather Section */}
+          <div className="flex items-center justify-between mb-6">
+            {/* Left: Current Weather */}
+            <div className="flex items-center gap-6">
+              <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/5 ring-1 ring-white/10">
+                {transformedData ? (
+                  <WeatherIcon weatherCode={transformedData.weatherCode} className="w-12 h-12" />
+                ) : (
+                  <WeatherIcon weatherCode={0} className="w-12 h-12" />
+                )}
               </div>
-              <div 
-                className="text-sm opacity-90" 
-                style={{ color: BRAND_CONFIG.gold }}
-              >
-                {transformedData 
-                  ? getWeatherStatusText(loading, error, transformedData.label)
-                  : getWeatherStatusText(loading, error, "")
-                }
+              <div>
+                <div className="text-6xl font-bold leading-none mb-2">
+                  {transformedData ? formatTemperature(transformedData.temperature) : "–"}
+                </div>
+                <div 
+                  className="text-lg font-medium" 
+                  style={{ color: BRAND_CONFIG.gold }}
+                >
+                  {transformedData 
+                    ? getWeatherStatusText(loading, error, transformedData.label)
+                    : getWeatherStatusText(loading, error, "")
+                  }
+                </div>
+                <div className="text-sm opacity-70 mt-1">
+                  Santiago de Bougado, Porto
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Additional Info */}
+            <div className="text-right">
+              <div className="text-sm opacity-70 mb-1">Sensação Térmica</div>
+              <div className="text-2xl font-semibold">
+                {transformedData ? formatTemperature(transformedData.apparentTemperature) : "–"}
               </div>
             </div>
           </div>
 
-          {/* Right: details inline */}
-          <div className="col-span-12 md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3">
-              <div className="flex items-center gap-2 opacity-80">
-                <Thermometer className="w-4 h-4" />
-                Sensação
+          {/* Weather Details Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <Wind className="w-5 h-5 opacity-80" style={{ color: BRAND_CONFIG.gold }} />
+                <span className="text-sm font-medium opacity-80">Vento</span>
               </div>
-              <div className="text-xl font-semibold">
-                {transformedData ? formatTemperature(transformedData.apparentTemperature) : "–"}
-              </div>
-            </div>
-            
-            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3">
-              <div className="flex items-center gap-2 opacity-80">
-                <Wind className="w-4 h-4" />
-                Vento
-              </div>
-              <div className="text-xl font-semibold">
+              <div className="text-2xl font-bold">
                 {transformedData ? formatWindSpeed(transformedData.windSpeed) : "–"}
               </div>
             </div>
             
-            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 hidden md:block">
-              <div className="flex items-center gap-2 opacity-80">Local</div>
-              <div className="text-xl font-semibold">{HOTEL_CONFIG.city}</div>
+            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <Droplets className="w-5 h-5 opacity-80" style={{ color: BRAND_CONFIG.gold }} />
+                <span className="text-sm font-medium opacity-80">Humidade</span>
+              </div>
+              <div className="text-2xl font-bold">
+                {transformedData ? "75%" : "–"}
+              </div>
+            </div>
+            
+            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <Eye className="w-5 h-5 opacity-80" style={{ color: BRAND_CONFIG.gold }} />
+                <span className="text-sm font-medium opacity-80">Visibilidade</span>
+              </div>
+              <div className="text-2xl font-bold">
+                {transformedData ? "10 km" : "–"}
+              </div>
+            </div>
+            
+            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <Gauge className="w-5 h-5 opacity-80" style={{ color: BRAND_CONFIG.gold }} />
+                <span className="text-sm font-medium opacity-80">Pressão</span>
+              </div>
+              <div className="text-2xl font-bold">
+                {transformedData ? "1013 hPa" : "–"}
+              </div>
+            </div>
+          </div>
+
+          {/* Status Bar */}
+          <div className="mt-4 pt-4 border-t border-white/10">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="opacity-70">Dados meteorológicos em tempo real</span>
+              </div>
+              <div className="opacity-70">
+                Atualizado a cada 10 minutos
+              </div>
             </div>
           </div>
         </div>

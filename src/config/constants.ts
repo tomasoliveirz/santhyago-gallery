@@ -4,8 +4,8 @@ import type { AppConfig, HotelConfig, BrandConfig, GalleryConfig } from '@/types
 // 🏨 Hotel Configuration
 // =============================
 export const HOTEL_CONFIG: HotelConfig = {
-  name: "Hotel Santhyago Trofa",
-  city: "Trofa, PT",
+  name: "Hotel Santhyago",
+  city: "Santiago de Bougado, Porto",
   latitude: 41.3392,
   longitude: -8.5610,
   timezone: "Europe/Lisbon",

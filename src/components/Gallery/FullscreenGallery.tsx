@@ -21,7 +21,7 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
   }
 
   return (
-    <div className={`relative h-[86vh] md:h-[88vh] w-full overflow-hidden rounded-3xl ${className}`}>
+    <div className={`relative h-[75vh] md:h-[78vh] w-full overflow-hidden rounded-3xl ${className}`}>
       <AnimatePresence mode="wait">
         <motion.img
           key={currentImage.id}
