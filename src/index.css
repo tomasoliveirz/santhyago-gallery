@@ -42,22 +42,21 @@
     overflow: hidden;
   }
 
-  .gallery-image {
+  /* Gallery layers para cross-fade */
+  .slide {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 1.5s ease-in-out;
   }
 
-  .gallery-image.fade-out {
-    opacity: 0;
-  }
-
-  .gallery-image.fade-in {
-    opacity: 1;
+  /* Respeita reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .slide {
+      transition: none !important;
+      transform: none !important;
+    }
   }
 
   /* ============================= */
