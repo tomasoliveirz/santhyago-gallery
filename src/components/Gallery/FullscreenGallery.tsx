@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { GalleryProps } from '@/types';
 
 // =============================
-// 🎞️ Fullscreen Gallery - True Cross-Fade
+// 🎞️ Fullscreen Gallery - Deterministic Cross-Fade (no transforms)
 // =============================
 
 const ease = "cubic-bezier(0.22, 0.0, 0.0, 1)"; // suave/premium
@@ -12,75 +12,91 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
   const fadeMs = 2500; // cross-fade lento e suave
 
   const [showA, setShowA] = useState(true);
+  const showRef = useRef(true);
   const [srcA, setSrcA] = useState(images[0]?.url || "");
   const [srcB, setSrcB] = useState(images[1]?.url || "");
-  const timers = useRef<number[]>([]);
   const currentIndexRef = useRef(0);
+  const timerRef = useRef<number | null>(null);
 
   // Preload helper
   const preload = (url: string) =>
-    new Promise<void>((resolve, reject) => {
+    new Promise<void>((resolve) => {
+      if (!url) return resolve();
       const img = new Image();
       img.onload = () => resolve();
-      img.onerror = () => reject();
+      img.onerror = () => resolve(); // não bloquear
       img.src = url;
     });
 
+  // Atualiza ref quando o estado muda
   useEffect(() => {
-    if (!images || images.length === 0) return;
-    if (images.length === 1) {
-      // Se só houver uma imagem, mostra ela
-      setSrcA(images[0].url);
-      setShowA(true);
-      return;
+    showRef.current = showA;
+  }, [showA]);
+
+  // Reinicializa quando as imagens mudarem
+  useEffect(() => {
+    // limpa qualquer timer pendente
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
 
-    let nextIdx = 1; // começamos da segunda imagem
+    if (!images || images.length === 0) return;
 
-    const loop = async () => {
-      // 1) aguarda o tempo de exposição (imagem parada e visível)
-      await new Promise(resolve => {
-        timers.current.push(window.setTimeout(resolve, holdMs));
+    // setup inicial determinístico
+    currentIndexRef.current = 0;
+    setShowA(true);
+    setSrcA(images[0]?.url || "");
+    setSrcB(images[(0 + 1) % images.length]?.url || "");
+
+    const runStep = async () => {
+      // espera a exposição completa
+      await new Promise<void>(resolve => {
+        timerRef.current = window.setTimeout(() => resolve(), holdMs);
       });
 
-      // 2) prepara próxima imagem (preload para evitar flash)
-      const nextUrl = images[nextIdx]?.url;
-      if (!nextUrl) return;
+      // calcula próximo índice e pre-carrega
+      const nextIdx = (currentIndexRef.current + 1) % images.length;
+      const nextUrl = images[nextIdx]?.url || "";
+      await preload(nextUrl);
 
-      try { 
-        await preload(nextUrl); 
-      } catch (err) {
-        console.warn('Erro ao carregar imagem:', nextUrl);
-      }
-
-      // 3) coloca a próxima no layer escondido
-      if (showA) {
+      // coloca a próxima imagem na camada escondida com base no estado ATUAL
+      const showingA = showRef.current;
+      if (showingA) {
         setSrcB(nextUrl);
       } else {
         setSrcA(nextUrl);
       }
 
-      // 4) dispara o cross-fade (ambas transições em simultâneo)
-      await new Promise(resolve => {
+      // dispara cross-fade simultâneo
+      await new Promise<void>(resolve => {
         requestAnimationFrame(() => {
-          setShowA(v => !v);
-          currentIndexRef.current = nextIdx;
-          // aguarda o fade terminar completamente
-          timers.current.push(window.setTimeout(resolve, fadeMs));
+          setShowA(prev => {
+            const next = !prev;
+            showRef.current = next;
+            return next;
+          });
+          // aguarda o fade terminar
+          timerRef.current = window.setTimeout(() => resolve(), fadeMs);
         });
       });
 
-      // 5) avança o ponteiro e recomeça
-      nextIdx = (nextIdx + 1) % images.length;
-      loop();
+      // finaliza troca: atualiza índice atual
+      currentIndexRef.current = nextIdx;
+
+      // agenda próximo ciclo
+      runStep();
     };
 
-    loop();
+    // inicia ciclo
+    runStep();
 
+    // cleanup on unmount or images change
     return () => {
-      // limpa timers ao desmontar
-      timers.current.forEach(t => clearTimeout(t));
-      timers.current = [];
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     };
   }, [images, holdMs, fadeMs]);
 
@@ -118,8 +134,7 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
           height: "100%",
           objectFit: "cover",
           opacity: showA ? 1 : 0,
-          transform: showA ? "scale(1)" : "scale(1.015)",
-          transition: `opacity var(--fadeMs) var(--ease), transform var(--fadeMs) linear`,
+          transition: `opacity var(--fadeMs) var(--ease)`,
         }}
       />
 
@@ -136,8 +151,7 @@ export function FullscreenGallery({ images, config, className = '' }: GalleryPro
           height: "100%",
           objectFit: "cover",
           opacity: showA ? 0 : 1,
-          transform: showA ? "scale(1.015)" : "scale(1)",
-          transition: `opacity var(--fadeMs) var(--ease), transform var(--fadeMs) linear`,
+          transition: `opacity var(--fadeMs) var(--ease)`,
         }}
       />
 
