@@ -1,12 +1,14 @@
 import type { ComponentProps } from '@/types';
 
 // =============================
-// 📄 Footer Component
+// 📄 Footer Component - Fullscreen Optimized
 // =============================
 export function Footer({ className = '' }: ComponentProps) {
   return (
-    <div className={`mt-4 text-xs opacity-50 text-center ${className}`}>
-      Dados meteorológicos fornecidos por Open‑Meteo
+    <div className={`footer-container ${className}`}>
+      <div className="footer-text">
+        Dados meteorológicos fornecidos por Open‑Meteo
+      </div>
     </div>
   );
 }
