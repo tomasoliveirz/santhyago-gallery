@@ -4,20 +4,20 @@ import type { AppConfig, HotelConfig, BrandConfig, GalleryConfig } from '@/types
 // 🏨 Hotel Configuration
 // =============================
 export const HOTEL_CONFIG: HotelConfig = {
-  name: "Hotel Santhyago",
-  city: "Santiago de Bougado, Porto",
+  name: "Hotel Santhyago Trofa",
+  city: "Trofa, Portugal",
   latitude: 41.3392,
   longitude: -8.5610,
   timezone: "Europe/Lisbon",
 };
 
 // =============================
-// 🎨 Brand Configuration
+// 🎨 Brand Configuration - Premium Boutique
 // =============================
 export const BRAND_CONFIG: BrandConfig = {
-  gold: "#C9A94A",
-  goldDeep: "#8A6D2F",
-  white: "#FFFFFF",
+  gold: "#BFA05A",        // Dourado de destaque
+  goldDeep: "#C7A862",    // Dourado escuro
+  white: "#F5F5F5",       // Branco quente
 };
 
 // =============================
@@ -132,8 +132,8 @@ export const GALLERY_CONFIG: GalleryConfig = {
       order: 17,
     },
   ],
-  slideInterval: 7000,
-  transitionDuration: 1000,
+  slideInterval: 7000, // 7 segundos
+  transitionDuration: 800, // 800ms para transições suaves
 };
 
 // =============================

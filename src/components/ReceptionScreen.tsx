@@ -1,58 +1,39 @@
 import { useClock } from '@/hooks/useClock';
 import { useWeather } from '@/hooks/useWeather';
 import { useGallery } from '@/hooks/useGallery';
-import { Header } from '@/components/Layout/Header';
 import { FullscreenGallery } from '@/components/Gallery/FullscreenGallery';
-import { TestGallery } from '@/components/TestGallery';
-import { WeatherDisplay } from '@/components/Weather/WeatherDisplay';
-import { Footer } from '@/components/Layout/Footer';
+import { TopOverlay } from '@/components/Layout/TopOverlay';
+import { WeatherOverlay } from '@/components/Weather/WeatherOverlay';
 
 // =============================
-// 🖥️ Reception Screen Component - Fullscreen Optimized
+// 🖥️ Hotel Santhyago Trofa - Reception Screen
 // =============================
 export function ReceptionScreen() {
   const { dateStr, timeStr } = useClock();
   const { data: weatherData, loading: weatherLoading, error: weatherError } = useWeather();
-  const { data: galleryImages, loading: galleryLoading, error: galleryError } = useGallery();
+  const { data: galleryImages } = useGallery();
 
   const clockData = { dateStr, timeStr };
 
-  // Debug logs
-  console.log('Gallery state:', { galleryImages, galleryLoading, galleryError });
-
   return (
-    <div className="h-screen w-screen overflow-hidden select-none cursor-default bg-[#0D0D0D] text-white flex flex-col">
-      {/* Header - Fixed height */}
-      <Header clockData={clockData} />
+    <div className="h-screen w-screen overflow-hidden bg-black">
+      {/* Full-Bleed Gallery */}
+      <FullscreenGallery images={galleryImages || []} />
 
-      {/* Main Gallery - Flexible height */}
-      <div className="flex-1 p-2 md:p-4" style={{ minHeight: '400px' }}>
-        {galleryLoading ? (
-          <div className="gallery-container bg-gray-900 flex items-center justify-center">
-            <div className="text-white text-lg">Carregando galeria...</div>
-          </div>
-        ) : galleryError ? (
-          <div className="gallery-container bg-gray-900 flex items-center justify-center">
-            <div className="text-white text-lg">Erro ao carregar galeria: {galleryError}</div>
-          </div>
-        ) : galleryImages ? (
-          <FullscreenGallery images={galleryImages} />
-        ) : (
-          <div className="gallery-container bg-gray-900 flex items-center justify-center">
-            <div className="text-white text-lg">Nenhuma imagem disponível - Debug: {JSON.stringify({ galleryImages, galleryLoading, galleryError })}</div>
-          </div>
-        )}
-      </div>
+      {/* Top Overlay - Brand & Clock */}
+      <TopOverlay clockData={clockData} />
 
-      {/* Weather - Fixed height */}
-      <WeatherDisplay 
+      {/* Bottom Overlay - Weather */}
+      <WeatherOverlay 
         weatherData={weatherData} 
         loading={weatherLoading} 
         error={weatherError} 
       />
 
-      {/* Footer - Fixed height */}
-      <Footer />
+      {/* Credits */}
+      <div className="credits">
+        Open-Meteo
+      </div>
     </div>
   );
 }
