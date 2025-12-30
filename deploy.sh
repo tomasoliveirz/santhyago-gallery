@@ -2,7 +2,7 @@
 set -e
 
 # Configurações
-SERVER="ubuntu@51.38.190.127"
+SERVER="ubuntu@51.38.190.126"
 REMOTE_PATH="/var/www/santhyago-gallery"
 PROJECT_NAME="santhyago-gallery"
 
