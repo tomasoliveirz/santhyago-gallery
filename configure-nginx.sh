@@ -6,7 +6,7 @@ set -e
 
 SITE="santhyago-gallery"
 WEBROOT="/var/www/$SITE"
-NEW_IP="51.38.190.127"
+NEW_IP="51.38.190.126"
 
 echo "🔧 Configurando Nginx para ${SITE}"
 echo "================================"
@@ -27,8 +27,8 @@ echo ""
 echo "⚙️  Criando configuração do Nginx..."
 sudo tee /etc/nginx/sites-available/$SITE >/dev/null <<'NGINX'
 server {
-    listen 51.38.190.127:80 default_server;
-    server_name _;
+    listen 51.38.190.126:80 default_server;
+    server_name gallery.santhyago.com;
 
     root /var/www/santhyago-gallery;
     index index.html;
