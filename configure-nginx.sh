@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script para executar NO SERVIDOR (ubuntu@51.38.190.127)
+# Script para executar NO SERVIDOR (ubuntu@51.38.190.126)
 # Execute com: bash configure-nginx.sh
 
 set -e
@@ -86,13 +86,13 @@ sudo systemctl status nginx --no-pager | head -n 10
 # 8. Teste final
 echo ""
 echo "🧪 Teste rápido:"
-curl -sSI http://127.0.0.1/ -H "Host: 51.38.190.127" | head -n 10
+curl -sSI http://127.0.0.1/ -H "Host: gallery.santhyago.com" | head -n 10
 
 echo ""
 echo "================================"
 echo "✅ Configuração concluída!"
 echo ""
-echo "🌐 Acesse: http://51.38.190.127/"
+echo "🌐 Acesse: http://gallery.santhyago.com/"
 echo ""
 echo "📝 Logs:"
 echo "   sudo tail -f /var/log/nginx/santhyago-gallery.access.log"
