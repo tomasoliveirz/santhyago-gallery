@@ -32,7 +32,7 @@ export function WeatherOverlay({ weatherData, loading, error, className = '' }: 
               {transformedData ? formatTemperature(transformedData.temperature) : "–"}
             </div>
             <div className="weather-condition">
-              {transformedData 
+              {transformedData
                 ? getWeatherStatusText(loading, error, transformedData.label)
                 : getWeatherStatusText(loading, error, "")
               }
@@ -54,7 +54,7 @@ export function WeatherOverlay({ weatherData, loading, error, className = '' }: 
               {transformedData ? `${Math.round(transformedData.temperature + 2)}°` : "–"}
             </div>
           </div>
-          
+
           <div className="forecast-chip">
             <div className="forecast-day">Depois</div>
             <div className="forecast-icon">
@@ -64,16 +64,8 @@ export function WeatherOverlay({ weatherData, loading, error, className = '' }: 
               {transformedData ? `${Math.round(transformedData.temperature - 1)}°` : "–"}
             </div>
           </div>
-          
-          <div className="forecast-chip">
-            <div className="forecast-day">Sexta</div>
-            <div className="forecast-icon">
-              <WeatherIcon weatherCode={transformedData?.weatherCode || 0} className="w-full h-full" />
-            </div>
-            <div className="forecast-temps">
-              {transformedData ? `${Math.round(transformedData.temperature + 1)}°` : "–"}
-            </div>
-          </div>
+
+
         </div>
       </div>
     </div>

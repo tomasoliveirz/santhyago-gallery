@@ -34,7 +34,6 @@ export function useGallery(): ServiceResponse<GalleryImage[]> {
     fetchGallery();
   }, [fetchGallery]);
 
-
   return {
     data,
     loading,

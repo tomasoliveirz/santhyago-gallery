@@ -1,30 +1,16 @@
-# 🏨 Hotel Santhyago - Reception Screen
+# Santhyago Gallery
 
-Sistema de tela de recepção para o Hotel Santhyago com galeria dinâmica de imagens.
+A digital signage and gallery application for Hotel Santhyago, designed for smart TVs and reception displays.
 
-## 🚀 Execução
+## Features
+- **Weather Overlay:** Real-time weather updates with a minimal premium design.
+- **Gallery Mode:** Rotating image gallery for hotel ambiance.
+- **Dynamic Content:** Updates automatically without manual intervention.
 
-```bash
-npm install
-npm run dev
-```
+## Tech Stack
+- **Framework:** React (Vite)
+- **Styling:** Tailwind CSS
+- **Deployment:** Nginx / Linux VPS
 
-Acesse: http://localhost:3000
-
-## 🖼️ Imagens
-
-As imagens do hotel estão em `public/images/` e são servidas automaticamente.
-
-## 🏗️ Build
-
-```bash
-npm run build
-```
-
-## 📁 Estrutura
-
-- `src/components/` - Componentes React
-- `src/hooks/` - Hooks customizados  
-- `src/services/` - Serviços (API, cache)
-- `src/config/` - Configurações
-- `public/images/` - Imagens do hotel
+## Links
+- [Live Deployment](https://gallery.santhyago.com)
